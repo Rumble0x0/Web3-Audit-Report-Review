@@ -124,11 +124,11 @@ L330-L331确定了当`asset.storeMovingAverage`存在时，asset.cumulativeObs�
 
 在`_getCurrentPrice`函数中，L160 `if(asset.useMovingAverage) prices[numFeeds] **=** asset.cumulativeObs **/** asset.numObservations;`，这里说明存入prices数组中当前存入的值是`cumulativeObs`决定的，当函数返回的`price`就是由prices数组汇聚成的一个价格。因此出现了price参与移动平均价格的递归计算。
 
-### 2.2 **当 asset.useMovingAverage 为 true 时，_getCurrentPrice 在某些情况下可能会获得过时的价格**
+### 2.2 当 asset.useMovingAverage 为 true 时，_getCurrentPrice 在某些情况下可能会获得过时的价格
 
 L319获取的价格不是来自外部预言机的新鲜价格，而是旧的移动平均价格，只要时间足够长以重写整个`asset.obs`数组，数组中的所有价格都会变得越来越接近和陈旧。如果这期间实际价格波动较大，就会存在较大的套利机会。
 
-### 2.3 **当调用 storePrice 后 Feed 关闭时，价格模块会报告错误的 MA/使用 MA 的资产当前价格**
+### 2.3 当调用 storePrice 后 Feed 关闭时，价格模块会报告错误的 MA/使用 MA 的资产当前价格
 
 ## 3. 🟡 SimplePriceFeedStrategy.sol::getMedianPriceIfDeviation：价格会被计算错误
 
@@ -171,12 +171,12 @@ BalancerPoolTokenPrice.sol#L811 中通过调用`getLastInvariant`获得不变量
 
 当调用此函数时，获得了一个更新后的放大参数，那么最后一次不变量计算所使用的放大参数可能与当前放大参数不同。这可能导致计算获得的代币价格不准确，因为价格是依赖于放大参数的。如果放大参数改变了，理应重新计算价格以反映最新的市场情况。如果在计算某些重要价值，如代币价格、流动性提供者收益、交易滑点等时使用了错误或过时的放大参数，就可能导致代币价格计算的不准确，从而影响到交易决策、风险评估等方面。
 
-## 6. 🟡 **BalancerPoolTokenPrice.sol::getStablePoolTokenPrice：计算错误**
+## 6. 🟡 BalancerPoolTokenPrice.sol::getStablePoolTokenPrice：计算错误
 
 ![Untitled](Olympus%20RBS2%200%2072ad54c1c87a426a8b2c739533abe86b/Untitled%209.png)
 
 代码旨在识别 Balancer 流动性池中所有基础代币的最低价格。然后，该最低价格用于池的估值。但是在实际测试过程中，wstETH/aETHc 矿池最低价格与Balancer 流动性池中所有基础代币的最低价格不一致。
 
-## 7. 🔴 BunniPrice.sol::**getBunniTokenPrice：返回错误**
+## 7. 🔴 BunniPrice.sol::getBunniTokenPrice：返回错误
 
-此函数目的是返回BunniToken的单价，但是返回的是总价，还需要处于供应量
+此函数目的是返回BunniToken的单价，但是返回的是总价，还需要除以供应量
